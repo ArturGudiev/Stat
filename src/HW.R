@@ -39,16 +39,18 @@ processFile = function(filepath) {
         }else{
             lastL <- lastL + 1
         }
-        if(length(s)<1)next;
         #print(length(s))
     }
 
     close(con)
     print (c(win, lose, lastW, lastL))
-    return(c(win, lose))
+    return(c(win, lose, lastW, lastL))
 }
 
 fpath = 'C:\\Artur\\University\\Stat\\HW\\2\\casino.txt'
-processFile(fpath)
-Sys.setenv(LANG = 'en')
-print(countWL(c('L', 'W', 'W', 'W')))
+# Sys.setenv(LANG = 'en')
+s = processFile(fpath)
+print(paste('Win ', s[1]))
+print(paste('Lose ', s[2]))
+print(paste('Last_Win ', s[3]))
+print(paste('Last_Lose ', s[4]))
