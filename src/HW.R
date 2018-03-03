@@ -51,4 +51,4 @@ processFile = function(filepath) {
 fpath = 'C:\\Artur\\University\\Stat\\HW\\2\\casino.txt'
 processFile(fpath)
 Sys.setenv(LANG = 'en')
-# print(countWL(c('L', 'W', 'W', 'W')))
+print(countWL(c('L', 'W', 'W', 'W')))
