@@ -80,10 +80,10 @@ processFile2 = function(filepath) {
 fpath = 'C:\\Artur\\University\\Stat\\HW\\2\\casino.txt'
 Sys.setenv(LANG = 'en')
 s = processFile2(fpath)
-print(paste('Win '), s[1])
-print(paste('Lose '), s[2])
-print(paste('Last win '), s[3])
-print(paste('Last lose '), s[4])
+# print(paste('Win '), s[1])
+# print(paste('Lose '), s[2])
+# print(paste('Last win '), s[3])
+# print(paste('Last lose '), s[4])
 
 
 
