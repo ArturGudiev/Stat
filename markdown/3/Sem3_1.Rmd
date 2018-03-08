@@ -1,0 +1,185 @@
+---
+title: "Seminar3"
+author: "Artur Gudiev"
+date: '28 февраля 2018 г '
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Задание 1
+
+```{r cars}
+explore_ci = function(n, alpha, std){
+    sample = rnorm(n, mean = 4, sd = std)
+
+    m = mean(sample)
+    student_qunatile = qt(1-alpha/2, n-1)
+
+    s1 = m - std/sqrt(n)*student_qunatile
+    s2 = m + std/sqrt(n)*student_qunatile
+
+    mean_vector = c()
+    for(i in c(1:1000)){
+        new_sample = rnorm(n, mean = 4, sd = std)
+        mean_vector <- c(mean_vector, mean(new_sample))
+    }
+    cat("n = ", n)
+    cat("\nalpha = ", alpha)
+    cat("\nstd = ", std)
+    cat("\nCI = ", s1, s2)
+    cat("\nCI length= ", s2 - s1, '\n')
+    qua = quantile(mean_vector,c(alpha/2,1-alpha/2))
+    cat('Generated CI: ', qua[[1]], qua[[2]])
+    cat('\n')
+}
+Sys.setenv(LANG = 'en')
+```
+
+<br> 
+
+#### Меняем N
+
+``` {r}
+explore_ci(30, 0.05, 4)
+explore_ci(100, 0.05, 4)
+explore_ci(1000, 0.05, 4)
+```
+
+<br> 
+
+#### Меняем alpha
+```{r}
+
+explore_ci(30, 0.01, 4)
+explore_ci(30, 0.05, 4)
+explore_ci(30, 0.1, 4)
+
+```
+
+<br> 
+
+#### Меняем дисперсию
+```{r}
+explore_ci(30, 0.05, 2)
+explore_ci(30, 0.05, 4)
+explore_ci(30, 0.05, 8)
+
+```
+
+<br> 
+
+#### Ответы на вопросы
+1) Если дисперсия неизвестна, то мы будем использовать формулу из общей схемы построения интервалов, где нам нужно будет подобрать функцию F, найти к ней обратную и посчитать значения обратной функции в соответствующих квантилях. 
+Если же дисперсия известна, то мы используем формулу с квантилями распределения Стьюдента. 
+
+2) Я построил интервал, когда дисперсия известна
+
+3) При увеличении дисперсии длина доверительного интервала растет из-за большего разброса. 
+   С ростом alpha (уровня значимости) длина д.и. уменьшается, так как возрастает точность. 
+   При увеличении объема выборки длина доверительного интервала уменьшается.
+   
+   <br>
+
+## Задание 2
+
+``` {r}
+Sys.setenv(LANG = 'en')
+explore_median = function(n, alpha){
+lambda = 0.7
+sample = rexp(n, lambda)
+sort_sample = sort(sample)
+
+j <- n/2 - qnorm(1-alpha/2)*sqrt(n)/2
+k <- n/2 + qnorm(1-alpha/2)*sqrt(n)/2
+s1 = sort_sample[j]
+s2 = sort_sample[k]
+
+vector_median <- c()
+for(i in c(1:1000)){
+  new_sample <- rexp(n, lambda)
+  vector_median <- c(vector_median, median(new_sample))
+}
+
+cat("\nCI = ", s1, s2)
+cat("\nCI median= ", median(sample), '\n')
+cat('Generated CI: ', quantile(vector_median, c(alpha/2,1-alpha/2)))
+
+
+hist(vector_median,freq=F,col=rgb(0,0,1,1/4), main=sprintf('N = %s', n))
+}
+
+explore_median(30, 0.05)
+explore_median(3000, 0.05)
+explore_median(10000, 0.05)
+```
+
+<br> 
+
+#### Ответы на вопросы
+1) При увеличении n медиана принимает нормальное распределение
+2) Формула следует из симметричности распределения Бернулли
+3) С увеличением N ДИ сужается
+
+   <br>
+
+## Задание 3
+``` {r}
+init_sample = rnorm(2000,5,2)
+
+boxplot_replacement = function(size)
+{
+  
+mean_norep = rep(NA,1000) 
+mean_withrep = rep(NA,1000)
+mean_fromp2 = rep(NA,1000)
+
+for (i in c(1:1000))
+{
+  sample_fromp2 =  rnorm(size,5,2) 
+  mean_fromp2[i] = mean(sample_fromp2)
+  sample_norep = sample(init_sample,size,replace=F)
+  mean_norep[i] = mean(sample_norep)
+  sample_withrep = sample(init_sample,size,replace=T)
+  mean_withrep[i] = mean(sample_withrep)
+}
+
+
+sample_withrep = sample(init_sample,size,replace=T)
+alpha = 0.01
+finite1 = 5 - 2/sqrt(size)*qt(1-alpha/2, size-1)
+finite2 = 5 + 2/sqrt(size)*qt(1-alpha/2, size-1)
+infinite1 = 5 - (size/(size-1))*2/sqrt(size)*qt(1-alpha/2, size-1)
+infinite2 = 5 + (size/(size-1))*2/sqrt(size)*qt(1-alpha/2, size-1)
+
+
+
+print(c(finite1, finite2))
+print(c(infinite1, infinite2))
+
+cat('Expected value: ')
+print(c(mean(mean_fromp2), mean(mean_norep), mean(mean_withrep)))
+cat('Dispersions: ')
+print(c(var(mean_fromp2), var(mean_norep), var(mean_withrep)))
+
+
+
+boxplot(mean_norep,mean_withrep, mean_fromp2,names = c('No replacement','With replacement', 'Sample NOT from finite population'))
+  
+}
+
+boxplot_replacement(30)
+abline(h=5,lwd=2,col='green')
+
+boxplot_replacement(1600)
+abline(h=5,lwd=2,col='green')
+```
+<br> 
+
+#### Ответы на вопросы
+1) Несмещенная оценка : $$\frac{n-1}{n}Var(\hat{X}) $$
+2) Поправка на конечность сужает интервал
+3) Матожидания и дисперсии разные
+
